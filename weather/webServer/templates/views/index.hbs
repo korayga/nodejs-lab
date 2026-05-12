@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="/img/logo.png">
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="main-content">
+        {{>header}}
+        
+        <p>Hava durumunu öğrenmek için bir şehir girin:</p>
+        
+        <form>
+            <input type="text" placeholder="Location (e.g., Istanbul)">
+            <button>Search</button>
+        </form>
+
+        <p id="message-1"></p>
+        <p id="message-2"></p>
+    </div>
+
+    {{>footer}}
+
+    <script>
+        const weatherForm = document.querySelector('form')
+        const searchElement = document.querySelector('input')
+        const messageOne = document.querySelector('#message-1')
+        const messageTwo = document.querySelector('#message-2')
+
+        weatherForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const location = searchElement.value.trim()
+            messageOne.textContent = 'Yükleniyor...'
+            messageTwo.textContent = ''
+
+            fetch('/weather?address=' + location).then((response) => {
+                response.json().then((data) => {
+                    if (data.error) {
+                        messageOne.textContent = data.error
+                    } else {
+                        messageOne.textContent = data.location
+                        messageTwo.textContent = data.forecast.weather + ". Sıcaklık " + data.forecast.temp + " derece, hissedilen " + data.forecast.feelTemp + " derece. " + data.forecast.message
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>
